@@ -26,6 +26,18 @@ export default function HomePage() {
           >
             Anonymous Chat
           </Link>
+          <Link
+            href="/home/resilience-hub"
+            className="text-lg text-indigo-600 hover:underline"
+          >
+            Resilience Hub
+          </Link>
+          <Link
+            href="/home/admin"
+            className="text-lg text-indigo-600 hover:underline"
+          >
+            Admin Panel
+          </Link>
         </nav>
       </div>
     </main>

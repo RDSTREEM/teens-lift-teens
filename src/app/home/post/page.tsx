@@ -14,6 +14,20 @@ export default function PostPage() {
 
   useEffect(() => {
     fetchPosts();
+    // Subscribe to new posts
+    const subscription = supabase
+      .channel("public:posts")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "posts" },
+        (payload) => {
+          setPosts((prev) => [payload.new, ...prev]);
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(subscription);
+    };
     // eslint-disable-next-line
   }, []);
 
@@ -38,7 +52,7 @@ export default function PostPage() {
     });
     if (error) setError(error.message);
     setNewPost("");
-    fetchPosts();
+    // fetchPosts(); // Not needed if subscription works
   }
 
   return (
