@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,9 @@ export default function SignInPage() {
   const [signupPassword, setSignupPassword] = useState("");
   const [signupUsername, setSignupUsername] = useState("");
   const [signupError, setSignupError] = useState<string | null>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,9 +33,26 @@ export default function SignInPage() {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSignedUp(true);
+    setLoginError(null);
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: signupEmail,
+        password: signupPassword,
+      });
+      if (error) {
+        setLoginError(error.message);
+      } else if (data?.user) {
+        // successful login
+        router.push("/home");
+      }
+    } catch (err: any) {
+      setLoginError(err?.message ?? "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (signedUp) {
@@ -110,8 +131,17 @@ export default function SignInPage() {
               {signupError}
             </div>
           )}
+          {loginError && showLogin && (
+            <div className="text-red-500 text-sm text-center">{loginError}</div>
+          )}
           <Button type="submit" className="w-full mt-2">
-            {showLogin ? "Log In" : "Sign Up"}
+            {loading
+              ? showLogin
+                ? "Logging in..."
+                : "Please wait..."
+              : showLogin
+                ? "Log In"
+                : "Sign Up"}
           </Button>
         </form>
         <p className="text-sm text-zinc-900/60 mt-4 text-center">
