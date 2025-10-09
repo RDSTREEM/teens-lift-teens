@@ -76,11 +76,15 @@ const Nav = ({ onOpenSettings }: { onOpenSettings?: () => void }) => {
           <span className="text-xs">{item.label}</span>
         </button>
       ))}
-      <div className="flex items-center gap-2">
-        <button onClick={() => onOpenSettings?.()} className="p-1">
+      <div>
+        <button
+          onClick={() => onOpenSettings?.()}
+          className="flex flex-col items-center text-gray-700 hover:text-blue-500"
+        >
           <Gear className="w-6 h-6" />
+          <span className="text-xs">Settings</span>
         </button>
-        {user ? (
+        {/* {user ? (
           <button
             onClick={() => router.push("/profile")}
             className="flex items-center gap-2 p-1"
@@ -92,7 +96,7 @@ const Nav = ({ onOpenSettings }: { onOpenSettings?: () => void }) => {
           <button onClick={() => router.push("/signin")} className="p-1">
             <User className="w-6 h-6" />
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );
