@@ -1,9 +1,11 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function SignInPage() {
   const [showLogin, setShowLogin] = useState(false);
@@ -15,6 +17,14 @@ export default function SignInPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+
+  // Redirect away from signin if already authenticated
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push("/home");
+    }
+  }, [authLoading, user, router]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +130,7 @@ export default function SignInPage() {
             <Input
               id={showLogin ? "login-password" : "password"}
               type="password"
-              placeholder="••••••••"
+              placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
               required
               value={signupPassword}
               onChange={(e) => setSignupPassword(e.target.value)}
