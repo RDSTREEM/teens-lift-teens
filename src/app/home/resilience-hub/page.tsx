@@ -3,7 +3,13 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function ResilienceHubPage() {
-  const [blogs, setBlogs] = useState<any[]>([]);
+  type Blog = {
+    id: string;
+    title?: string;
+    content?: string;
+    created_at?: string;
+  };
+  const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +43,9 @@ export default function ResilienceHubPage() {
               <h3 className="text-lg font-semibold mb-2">{blog.title}</h3>
               <div className="mb-2">{blog.content}</div>
               <div className="text-xs text-zinc-500">
-                {new Date(blog.created_at).toLocaleString()}
+                {blog.created_at
+                  ? new Date(blog.created_at).toLocaleString()
+                  : ""}
               </div>
             </li>
           ))}

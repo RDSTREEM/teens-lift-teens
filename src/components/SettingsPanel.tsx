@@ -11,6 +11,8 @@ export default function SettingsPanel({
   onClose: () => void;
 }) {
   const { theme, setTheme } = useSettings();
+  const { reducedMotion, setReducedMotion, compactLayout, setCompactLayout } =
+    useSettings();
 
   if (!open) return null;
 
@@ -31,7 +33,7 @@ export default function SettingsPanel({
             <div className="flex gap-2">
               <button
                 onClick={() => setTheme("system")}
-                className={`flex-1 p-2 rounded ${theme === "system" ? "ring-2 ring-primary" : "border"}`}
+                className={`flex-1 p-2 rounded text-sm flex flex-col items-center gap-1 ${theme === "system" ? "ring-2 ring-primary" : "border"}`}
                 title="System"
               >
                 <Monitor className="w-5 h-5 mx-auto" />
@@ -39,7 +41,7 @@ export default function SettingsPanel({
               </button>
               <button
                 onClick={() => setTheme("light")}
-                className={`flex-1 p-2 rounded ${theme === "light" ? "ring-2 ring-primary" : "border"}`}
+                className={`flex-1 p-2 rounded text-sm flex flex-col items-center gap-1 ${theme === "light" ? "ring-2 ring-primary" : "border"}`}
                 title="Light"
               >
                 <Sun className="w-5 h-5 mx-auto" />
@@ -47,7 +49,7 @@ export default function SettingsPanel({
               </button>
               <button
                 onClick={() => setTheme("dark")}
-                className={`flex-1 p-2 rounded ${theme === "dark" ? "ring-2 ring-primary" : "border"}`}
+                className={`flex-1 p-2 rounded text-sm flex flex-col items-center gap-1 ${theme === "dark" ? "ring-2 ring-primary" : "border"}`}
                 title="Dark"
               >
                 <Moon className="w-5 h-5 mx-auto" />
@@ -58,9 +60,31 @@ export default function SettingsPanel({
 
           <div>
             <p className="mb-2 font-medium">Other</p>
-            <p className="text-sm text-muted-foreground">
-              More settings coming soon.
-            </p>
+            <div className="space-y-3">
+              <label className="flex items-center justify-between">
+                <span className="text-sm">Reduce motion</span>
+                <input
+                  type="checkbox"
+                  checked={reducedMotion}
+                  onChange={(e) => setReducedMotion(e.target.checked)}
+                  className="cursor-pointer"
+                />
+              </label>
+
+              <label className="flex items-center justify-between">
+                <span className="text-sm">Compact layout</span>
+                <input
+                  type="checkbox"
+                  checked={compactLayout}
+                  onChange={(e) => setCompactLayout(e.target.checked)}
+                  className="cursor-pointer"
+                />
+              </label>
+
+              <p className="text-sm text-muted-foreground">
+                Settings are saved locally to your browser.
+              </p>
+            </div>
           </div>
         </div>
       </div>

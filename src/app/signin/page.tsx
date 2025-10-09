@@ -58,8 +58,13 @@ export default function SignInPage() {
         // successful login
         router.push("/home");
       }
-    } catch (err: any) {
-      setLoginError(err?.message ?? "An unexpected error occurred");
+    } catch (err: unknown) {
+      let msg: string | null = null;
+      if (typeof err === "object" && err !== null && "message" in err) {
+        const maybe = (err as Record<string, unknown>).message;
+        if (typeof maybe === "string") msg = maybe;
+      }
+      setLoginError(msg ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -67,8 +72,14 @@ export default function SignInPage() {
 
   if (signedUp) {
     return (
-      <main className="pt-20 min-h-screen text-zinc-900 flex items-center justify-center">
-        <div className="w-full max-w-md bg-zinc-100/70 backdrop-blur-md p-8 rounded-2xl shadow-lg text-center">
+      <main
+        className="pt-20 min-h-screen flex items-center justify-center"
+        style={{ background: "var(--background)", color: "var(--foreground)" }}
+      >
+        <div
+          className="w-full max-w-md bg-card/90 backdrop-blur-md p-8 rounded-2xl shadow-lg text-center"
+          style={{ color: "var(--card-foreground)" }}
+        >
           <h2 className="text-2xl font-bold mb-4">Welcome!</h2>
           <p className="mb-6">
             {showLogin
@@ -81,8 +92,14 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="pt-20 min-h-screen text-zinc-900 flex items-center justify-center">
-      <div className="w-full max-w-md bg-zinc-100/70 backdrop-blur-md p-8 rounded-2xl shadow-lg">
+    <main
+      className="pt-20 min-h-screen flex items-center justify-center"
+      style={{ background: "var(--background)", color: "var(--foreground)" }}
+    >
+      <div
+        className="w-full max-w-md bg-card/90 backdrop-blur-md p-8 rounded-2xl shadow-lg"
+        style={{ color: "var(--card-foreground)" }}
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">
           {showLogin ? "Log In" : "Create Account"}
         </h2>
@@ -154,11 +171,15 @@ export default function SignInPage() {
                 : "Sign Up"}
           </Button>
         </form>
-        <p className="text-sm text-zinc-900/60 mt-4 text-center">
+        <p
+          className="text-sm mt-4 text-center"
+          style={{ color: "var(--muted-foreground)" }}
+        >
           {showLogin ? "Don't have an account? " : "Already have an account? "}
           <button
             type="button"
-            className="text-indigo-400 hover:underline bg-transparent border-none outline-none cursor-pointer"
+            className="hover:underline bg-transparent border-none outline-none cursor-pointer"
+            style={{ color: "var(--primary)" }}
             onClick={() => setShowLogin(!showLogin)}
           >
             {showLogin ? "Sign Up" : "Log In"}

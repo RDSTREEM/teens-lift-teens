@@ -38,9 +38,22 @@ const Nav = ({ onOpenSettings }: { onOpenSettings?: () => void }) => {
   const activeClass = (href: string) =>
     pathname === href ? "text-blue-600" : "text-gray-700 hover:text-blue-500";
 
+  const isDarkMode =
+    typeof document !== "undefined" &&
+    document.documentElement.classList.contains("dark");
+
   const BottomNav = (
     <div
-      className={`fixed bottom-0 w-full flex justify-around p-2 ${theme === "dark" ? "bg-zinc-900 border-t border-zinc-700 text-white" : "bg-white border-t border-gray-200"}`}
+      className={`fixed bottom-0 w-full flex justify-around p-2`}
+      style={{
+        background: isDarkMode
+          ? "var(--color-card, var(--card))"
+          : "var(--color-card, var(--card))",
+        borderTop: `1px solid var(--color-border, var(--border))`,
+        color: isDarkMode
+          ? "var(--color-card-foreground, var(--card-foreground))"
+          : "var(--color-card-foreground, var(--card-foreground))",
+      }}
     >
       {navItems.map((item) => (
         <button
@@ -64,7 +77,16 @@ const Nav = ({ onOpenSettings }: { onOpenSettings?: () => void }) => {
 
   const Navbar = (
     <div
-      className={`w-full flex justify-around p-2 ${theme === "dark" ? "bg-zinc-900 border-b border-zinc-700 text-white" : "bg-white border-b border-gray-200"}`}
+      className={`w-full flex justify-around p-2`}
+      style={{
+        background: isDarkMode
+          ? "var(--color-card, var(--card))"
+          : "var(--color-card, var(--card))",
+        borderBottom: `1px solid var(--color-border, var(--border))`,
+        color: isDarkMode
+          ? "var(--color-card-foreground, var(--card-foreground))"
+          : "var(--color-card-foreground, var(--card-foreground))",
+      }}
     >
       {navItems.map((item) => (
         <button

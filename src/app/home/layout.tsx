@@ -15,11 +15,15 @@ export default function HomeLayout({
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   // This is a client component to check auth
-  if (typeof window === "undefined") return null;
-  // Use dynamic import to avoid hydration mismatch
+  // Use hooks unconditionally
   const [checked, setChecked] = React.useState(false);
   const { user, loading } = useAuth();
   const router = useRouter();
+
+  // Wait until this component is mounted on the client to avoid
+  // calling router.replace during SSR. This keeps hooks order stable.
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
 
   React.useEffect(() => {
     if (!loading) {
@@ -31,6 +35,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, router]);
 
+  if (!mounted) return null;
   if (loading || !checked) return null;
   return <>{children}</>;
 }

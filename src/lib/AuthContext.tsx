@@ -8,8 +8,13 @@ import React, {
 } from "react";
 import { supabase } from "./supabaseClient";
 
+interface UserMinimal {
+  id: string;
+  email?: string | null;
+}
+
 interface AuthContextType {
-  user: any;
+  user: UserMinimal | null;
   loading: boolean;
 }
 
@@ -21,22 +26,24 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserMinimal | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const session = supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
+    supabase.auth.getSession().then(({ data }) => {
+      setUser((data.session?.user ?? null) as UserMinimal | null);
       setLoading(false);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-      },
-    );
+    const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser((session?.user ?? null) as UserMinimal | null);
+      setLoading(false);
+    });
     return () => {
-      listener.subscription.unsubscribe();
+      try {
+        listener?.subscription?.unsubscribe();
+      } catch {
+        // ignore
+      }
     };
   }, []);
 

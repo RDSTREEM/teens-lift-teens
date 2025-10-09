@@ -23,6 +23,10 @@ export default function AdminPanel() {
       setError("Title and content required.");
       return;
     }
+    if (!user) {
+      setError("User not authenticated.");
+      return;
+    }
     const { error } = await supabase.from("blogs").insert({
       title,
       content,

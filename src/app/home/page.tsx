@@ -21,7 +21,7 @@ function FeatureCard({
   href: string;
   title: string;
   description?: string;
-  Icon: any;
+  Icon: React.ComponentType<{ className?: string }>;
   compact?: boolean;
   showDescription?: boolean;
 }) {

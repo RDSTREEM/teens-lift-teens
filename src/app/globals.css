@@ -120,3 +120,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Reduce motion helper: when user enables reduced motion in settings we add .reduce-motion to <html> */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  transition: none !important;
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+/* Utilities to allow bg-card/foreground with opacity in components */
+.bg-card\/90 {
+  background-color: color-mix(in srgb, var(--card) 90%, transparent);
+}
+.text-card-foreground {
+  color: var(--card-foreground);
+}

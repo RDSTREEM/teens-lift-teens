@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export default function PostPage() {
   const { user } = useAuth();
-  const [posts, setPosts] = useState<any[]>([]);
+  type Post = { id: string; content?: string; created_at?: string };
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -21,14 +22,14 @@ export default function PostPage() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "posts" },
         (payload) => {
-          setPosts((prev) => [payload.new, ...prev]);
+          const newPost = payload.new as Post;
+          if (newPost && newPost.id) setPosts((prev) => [newPost, ...prev]);
         },
       )
       .subscribe();
     return () => {
       supabase.removeChannel(subscription);
     };
-    // eslint-disable-next-line
   }, []);
 
   async function fetchPosts() {
@@ -77,7 +78,9 @@ export default function PostPage() {
             <li key={post.id} className="bg-zinc-100 rounded-lg p-4">
               <span>{post.content}</span>
               <div className="text-xs text-zinc-500 mt-1">
-                {new Date(post.created_at).toLocaleString()}
+                {post.created_at
+                  ? new Date(post.created_at).toLocaleString()
+                  : ""}
               </div>
             </li>
           ))}

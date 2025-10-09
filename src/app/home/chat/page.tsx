@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<any[]>([]);
+  type ChatMessage = { id: string; content?: string; created_at?: string };
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [newMessage, setNewMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +20,7 @@ export default function ChatPage() {
     let stored = null;
     try {
       stored = localStorage.getItem(KEY);
-    } catch (e) {
+    } catch {
       // ignore
     }
     if (!stored) {
@@ -65,14 +66,14 @@ export default function ChatPage() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "chat_messages" },
         (payload) => {
-          setMessages((msgs) => [payload.new, ...msgs]);
+          const newMsg = payload.new as ChatMessage;
+          if (newMsg && newMsg.id) setMessages((msgs) => [newMsg, ...msgs]);
         },
       )
       .subscribe();
     return () => {
       supabase.removeChannel(subscription);
     };
-    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -106,11 +107,11 @@ export default function ChatPage() {
           const num = Math.floor(1000 + Math.random() * 9000).toString();
           try {
             localStorage.setItem(KEY, num);
-          } catch (e) {}
+          } catch {}
           sendAnon = num;
           setAnonId(num);
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -153,7 +154,7 @@ export default function ChatPage() {
     try {
       const today = new Date().toISOString().slice(0, 10);
       localStorage.setItem(MAP_KEY, JSON.stringify({ date: today, map: next }));
-    } catch (e) {}
+    } catch {}
     return num;
   }
 
@@ -189,7 +190,9 @@ export default function ChatPage() {
                   <div className="flex items-baseline justify-between">
                     <div className="font-semibold text-sm">#{displayId}</div>
                     <div className="text-xs text-zinc-500">
-                      {new Date(msg.created_at).toLocaleString()}
+                      {msg.created_at
+                        ? new Date(msg.created_at).toLocaleString()
+                        : ""}
                     </div>
                   </div>
                   <div className="mt-1">{text}</div>

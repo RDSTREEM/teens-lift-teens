@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export default function NotesPage() {
   const { user } = useAuth();
-  const [notes, setNotes] = useState<any[]>([]);
+  type Note = { id: string; content?: string; created_at?: string };
+  const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [newNote, setNewNote] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -15,10 +16,14 @@ export default function NotesPage() {
   useEffect(() => {
     if (!user) return;
     fetchNotes();
-    // eslint-disable-next-line
   }, [user]);
 
   async function fetchNotes() {
+    if (!user) {
+      setNotes([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const { data, error } = await supabase
       .from("notes")
@@ -34,6 +39,10 @@ export default function NotesPage() {
     e.preventDefault();
     setError(null);
     if (!newNote.trim()) return;
+    if (!user) {
+      setError("User not authenticated.");
+      return;
+    }
     const { error } = await supabase.from("notes").insert({
       user_id: user.id,
       content: newNote,
