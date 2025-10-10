@@ -67,7 +67,8 @@ export default function ChatPage() {
         { event: "INSERT", schema: "public", table: "chat_messages" },
         (payload) => {
           const newMsg = payload.new as ChatMessage;
-          if (newMsg && newMsg.id) setMessages((msgs) => [newMsg, ...msgs]);
+          // append new messages so newest appear at the bottom
+          if (newMsg && newMsg.id) setMessages((msgs) => [...msgs, newMsg]);
         },
       )
       .subscribe();
@@ -88,7 +89,11 @@ export default function ChatPage() {
       .order("created_at", { ascending: false })
       .limit(30);
     if (error) setError(error.message);
-    else setMessages(data || []);
+    else {
+      // data comes back newest-first (descending). Reverse it so
+      // messages are chronological (oldest -> newest) and newest is at the bottom.
+      setMessages((data || []).slice().reverse());
+    }
     setLoading(false);
   }
 
@@ -169,7 +174,7 @@ export default function ChatPage() {
           </span>
         </div>
       </div>
-      <div className="bg-zinc-100 rounded-lg p-4 mb-4 h-80 overflow-y-auto flex flex-col-reverse">
+      <div className="bg-zinc-100 rounded-lg p-4 mb-4 h-80 overflow-y-auto flex flex-col">
         {loading ? (
           <div>Loading...</div>
         ) : messages.length === 0 ? (
