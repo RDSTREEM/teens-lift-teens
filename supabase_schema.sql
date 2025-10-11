@@ -18,5 +18,6 @@ create table if not exists posts (
 create table if not exists chat_messages (
   id uuid primary key default gen_random_uuid(),
   content text not null,
+  username text,
   created_at timestamp with time zone default timezone('utc', now())
 );
